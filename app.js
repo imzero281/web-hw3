@@ -34,8 +34,8 @@ function renderCards(list) {
         // (나)
         card.setAttribute("data-type", m.type);
         card.setAttribute("data-title", m.title);
-        
-         // (다)
+
+        // (다)
         const rankHtml = m.type === "boxoffice"
             ? `<span class="rank">${m.rank}</span>`
             : "";
@@ -49,7 +49,8 @@ function renderCards(list) {
             : `<img class="poster" src="${posterUrl(m.poster, "w342")}" alt="${m.title} 포스터">`;
 
         card.innerHTML = `
-      <img class="poster" src="${posterUrl(m.poster, "w342")}" alt="${m.title} 포스터">
+      ${posterHtml}
+      ${rankHtml}
       <span class="badge">${m.rating}</span>
       <div class="info">
         <h3>${m.title}</h3>
@@ -61,7 +62,6 @@ function renderCards(list) {
         card.onclick = function () { alert(m.overview); };
     }
     document.getElementById("count").textContent = list.length + "편";
-    updateLikeCount();
 
     if (list.length === 0) {
         board.classList.add("is-empty");
@@ -70,4 +70,32 @@ function renderCards(list) {
     }
 }
 
-renderCards(movies);
+function getView() {
+
+    const keyword = document.querySelector("#q").value;
+    const sortType = document.querySelector("#sort").value;
+    const selectedType = document.querySelector('input[name="type"]:checked').value;
+
+    let result = [...movies];
+
+    if (keyword.trim() !== "") {
+        result = search(result, keyword);
+    }
+
+    if (selectedType !== "all") {
+        result = result.filter(m => m.type === selectedType);
+    }
+    result = sortBy(result, sortType, sortType !== "title");
+
+    return result;
+}
+
+function refresh() {
+    renderCards(getView());
+}
+
+refresh();
+
+document.querySelector("#q").addEventListener("input", refresh);
+document.querySelector("#sort").addEventListener("change", refresh);
+document.querySelector("#typeFilter").addEventListener("change", refresh);
