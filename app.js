@@ -30,11 +30,29 @@ function renderCards(list) {
         const card = document.createElement("article");
         card.className = "card";
         if (m.rating >= 8) { card.classList.add("hot"); }
+
+        // (나)
+        card.setAttribute("data-type", m.type);
+        card.setAttribute("data-title", m.title);
+        
+         // (다)
+        const rankHtml = m.type === "boxoffice"
+            ? `<span class="rank">${m.rank}</span>`
+            : "";
+
+        // (라)
+        if (m.poster === null) {
+            card.classList.add("no-poster");
+        }
+        const posterHtml = m.poster === null
+            ? `<div class="poster-fallback">${m.title[0]}</div>`
+            : `<img class="poster" src="${posterUrl(m.poster, "w342")}" alt="${m.title} 포스터">`;
+
         card.innerHTML = `
       <img class="poster" src="${posterUrl(m.poster, "w342")}" alt="${m.title} 포스터">
       <span class="badge">${m.rating}</span>
       <div class="info">
-        <h2>${m.title}</h2>
+        <h3>${m.title}</h3>
         <p class="year">${m.year}</p>
         <button class="like" type="button">♥</button>
       </div>`;
@@ -51,3 +69,5 @@ function renderCards(list) {
         board.classList.remove("is-empty");
     }
 }
+
+renderCards(movies);
