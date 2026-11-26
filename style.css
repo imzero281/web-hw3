@@ -198,13 +198,13 @@ footer {
 }
 
 
-@media (prefers-color-scheme: light){
-    :root{
-    --bg: #f3f5f9;
-    --surface: #ffffff;
-    --text: #afcfff;
-    --accent: #2878d0;
-    --warn: #e5484d;
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg: #f3f5f9;
+        --surface: #ffffff;
+        --text: #afcfff;
+        --accent: #2878d0;
+        --warn: #e5484d;
     }
 }
 
@@ -265,7 +265,17 @@ footer {
     cursor: pointer;
 }
 
+.like.liked {
+    color: crimson;
+}
+
 .state-empty {
     display: none;
     color: #fff;
+}
+
+
+.board.is-empty+.state-empty {
+    display:
+        block;
 }

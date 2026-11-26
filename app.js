@@ -48,6 +48,11 @@ function renderCards(list) {
             ? `<div class="poster-fallback">${m.title[0]}</div>`
             : `<img class="poster" src="${posterUrl(m.poster, "w342")}" alt="${m.title} 포스터">`;
 
+            
+    let likeClass = "like";
+    if (liked.includes(m.title)) {
+        likeClass = "like liked";
+    }
         card.innerHTML = `
       ${posterHtml}
       ${rankHtml}
@@ -55,13 +60,13 @@ function renderCards(list) {
       <div class="info">
         <h3>${m.title}</h3>
         <p class="year">${m.year}</p>
-        <button class="like" type="button">♥</button>
+        <button class="${likeClass}" type="button">♥</button>
       </div>`;
         board.appendChild(card);
         card.dataset.id = m.id;
-        card.onclick = function () { alert(m.overview); };
     }
     document.getElementById("count").textContent = list.length + "편";
+    document.getElementById("likeCount").textContent = liked.length;
 
     if (list.length === 0) {
         board.classList.add("is-empty");
@@ -94,8 +99,41 @@ function refresh() {
     renderCards(getView());
 }
 
+// 찜한 제목 배열을 브라우저에 저장하고 불러오기(교재에 없는 문법: localStorage, JSON)
+const liked = JSON.parse(localStorage.getItem("liked") || "[]");
+function saveLiked() {
+    localStorage.setItem("liked", JSON.stringify(liked));
+}
+
 refresh();
 
 document.querySelector("#q").addEventListener("input", refresh);
 document.querySelector("#sort").addEventListener("change", refresh);
 document.querySelector("#typeFilter").addEventListener("change", refresh);
+
+const board = document.querySelector(".board");
+
+board.addEventListener("click", function (e) {
+    const card = e.target.closest(".card");
+
+    if (!card) {
+        return;
+    }
+
+    const title = card.getAttribute("data-title");
+
+    if (e.target.closest(".like")) {
+        const i = liked.indexOf(title);
+
+        if (i === -1) {
+            liked.push(title);
+        } else {
+            liked.splice(i, 1);
+        }
+
+        saveLiked();
+        refresh();
+
+        return;
+    }
+});
