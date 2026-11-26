@@ -48,11 +48,11 @@ function renderCards(list) {
             ? `<div class="poster-fallback">${m.title[0]}</div>`
             : `<img class="poster" src="${posterUrl(m.poster, "w342")}" alt="${m.title} 포스터">`;
 
-            
-    let likeClass = "like";
-    if (liked.includes(m.title)) {
-        likeClass = "like liked";
-    }
+
+        let likeClass = "like";
+        if (liked.includes(m.title)) {
+            likeClass = "like liked";
+        }
         card.innerHTML = `
       ${posterHtml}
       ${rankHtml}
@@ -63,7 +63,6 @@ function renderCards(list) {
         <button class="${likeClass}" type="button">♥</button>
       </div>`;
         board.appendChild(card);
-        card.dataset.id = m.id;
     }
     document.getElementById("count").textContent = list.length + "편";
     document.getElementById("likeCount").textContent = liked.length;
@@ -95,9 +94,6 @@ function getView() {
     return result;
 }
 
-function refresh() {
-    renderCards(getView());
-}
 
 // 찜한 제목 배열을 브라우저에 저장하고 불러오기(교재에 없는 문법: localStorage, JSON)
 const liked = JSON.parse(localStorage.getItem("liked") || "[]");
@@ -105,15 +101,23 @@ function saveLiked() {
     localStorage.setItem("liked", JSON.stringify(liked));
 }
 
+const dialog = document.getElementById("detail");
+
+function refresh() {
+    renderCards(getView());
+}
+
 refresh();
 
 document.querySelector("#q").addEventListener("input", refresh);
 document.querySelector("#sort").addEventListener("change", refresh);
 document.querySelector("#typeFilter").addEventListener("change", refresh);
+document.getElementById("closeDetail").addEventListener("click", function () {
+    dialog.close();
+});
 
-const board = document.querySelector(".board");
-
-board.addEventListener("click", function (e) {
+const boardF = document.querySelector(".board");
+boardF.addEventListener("click", function (e) {
     const card = e.target.closest(".card");
 
     if (!card) {
@@ -136,4 +140,29 @@ board.addEventListener("click", function (e) {
 
         return;
     }
+    openDetail(title);
 });
+
+function openDetail(title) {
+    const movie = movies.find(m => m.title === title);
+
+    if (!movie) {
+        return;
+    }
+
+    const detailBody = document.querySelector("#detailBody");
+
+    const posterHtml = movie.poster === null
+        ? ""
+        : `<img src="${posterUrl(movie.poster, "w500")}" alt="${movie.title} 포스터">`;
+
+    detailBody.innerHTML = `
+        ${posterHtml}
+        <h2>${movie.title}</h2>
+        <p>개봉일: ${movie.date}</p>
+        <p>평점: ${movie.rating}</p>
+        <p>줄거리: ${movie.overview}</p>
+    `;
+
+    dialog.showModal();
+}
