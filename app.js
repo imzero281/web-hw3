@@ -74,6 +74,7 @@ function renderCards(list) {
     }
 }
 
+// getView : 화면의 검색어, 필터, 정렬 값을 읽음 ⇒ 영화 배열
 function getView() {
 
     const keyword = document.querySelector("#q").value;
@@ -103,11 +104,39 @@ function saveLiked() {
 
 const dialog = document.getElementById("detail");
 
+// refresh : 없음 ⇒ getView 결과로 보드를 다시 그림(반환값 없음)
 function refresh() {
     renderCards(getView());
 }
 
+// openDetail : 영화 제목 ⇒ 상세 창에 내용을 채워 열기
+function openDetail(title) {
+    const movie = movies.find(m => m.title === title);
+
+    if (!movie) {
+        return;
+    }
+
+    const detailBody = document.querySelector("#detailBody");
+
+    const posterHtml = movie.poster === null
+        ? ""
+        : `<img src="${posterUrl(movie.poster, "w500")}" alt="${movie.title} 포스터">`;
+
+    detailBody.innerHTML = `
+        ${posterHtml}
+        <h2>${movie.title}</h2>
+        <p>개봉일: ${movie.date}</p>
+        <p>평점: ${movie.rating}</p>
+        <p>줄거리: ${movie.overview}</p>
+    `;
+
+    dialog.showModal();
+}
+
 refresh();
+
+// 실행과 이벤트 등록 (+리스너)
 
 document.querySelector("#q").addEventListener("input", refresh);
 document.querySelector("#sort").addEventListener("change", refresh);
@@ -142,27 +171,3 @@ boardF.addEventListener("click", function (e) {
     }
     openDetail(title);
 });
-
-function openDetail(title) {
-    const movie = movies.find(m => m.title === title);
-
-    if (!movie) {
-        return;
-    }
-
-    const detailBody = document.querySelector("#detailBody");
-
-    const posterHtml = movie.poster === null
-        ? ""
-        : `<img src="${posterUrl(movie.poster, "w500")}" alt="${movie.title} 포스터">`;
-
-    detailBody.innerHTML = `
-        ${posterHtml}
-        <h2>${movie.title}</h2>
-        <p>개봉일: ${movie.date}</p>
-        <p>평점: ${movie.rating}</p>
-        <p>줄거리: ${movie.overview}</p>
-    `;
-
-    dialog.showModal();
-}
