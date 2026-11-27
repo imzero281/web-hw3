@@ -171,3 +171,13 @@ boardF.addEventListener("click", function (e) {
     }
     openDetail(title);
 });
+
+// 다크모드
+if (localStorage.getItem("mode") === "dark") {
+    document.body.classList.add("dark");
+}
+
+document.getElementById("themeToggle").addEventListener("click", function () {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.setItem("mode", isDark ? "dark" : "light");
+}); 
